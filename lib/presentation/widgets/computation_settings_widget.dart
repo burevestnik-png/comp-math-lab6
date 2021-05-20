@@ -4,7 +4,7 @@ import 'package:comp_math_lab6/presentation/widgets/option_text_field_widget.dar
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class FunctionTab extends GetView<FunctionTabController> {
+class ComputationSettings extends GetView<ComputationSettingsController> {
   space([double height = 10.0]) => SizedBox(height: height);
 
   @override
@@ -12,47 +12,59 @@ class FunctionTab extends GetView<FunctionTabController> {
     return Column(
       children: <Widget>[
         space(),
-        OptionTextField(
-          content: "Enter here:",
-          controller: controller.equationController,
-          onChange: (value) =>
-              controller.onStringFieldChange(value, obs: controller.equation),
-        ),
-        space(),
         OptionDropdown(
-          text: "Or just pick:",
+          text: "Choose equation:",
           items: controller.equations,
-          obs: controller.equations.first.obs,
-          onChange: controller.onPresetedEquationChange,
+          obs: controller.currentEquation,
+          onChange: controller.onCurrentEquationChange,
         ),
         space(15),
         OptionTextField(
-          content: "Left border:",
-          controller: controller.aController,
+          content: "x0:",
+          controller: controller.x0Controller,
           onChange: (String value) => controller.onDoubleFieldChange(
             value,
-            obs: controller.a,
+            obs: controller.x0,
           ),
         ),
         space(),
         OptionTextField(
-          content: "Right border:",
-          controller: controller.bController,
+          content: "y0:",
+          controller: controller.y0Controller,
           onChange: (String value) => controller.onDoubleFieldChange(
             value,
-            obs: controller.b,
+            obs: controller.y0,
           ),
         ),
         space(),
         OptionTextField(
-          content: "n:",
-          controller: controller.nController,
-          onChange: (String value) => controller.onIntFieldChange(
+          content: "End of range:",
+          controller: controller.rangeEndController,
+          onChange: (String value) => controller.onDoubleFieldChange(
             value,
-            obs: controller.n,
+            obs: controller.rangeEnd,
           ),
         ),
-        Expanded(
+        space(),
+        OptionTextField(
+          content: "Accuracy:",
+          controller: controller.accuracyController,
+          onChange: (String value) => controller.onDoubleFieldChange(
+            value,
+            obs: controller.accuracy,
+          ),
+        ),
+        space(),
+        OptionTextField(
+          content: "Step:",
+          controller: controller.stepController,
+          onChange: (String value) => controller.onDoubleFieldChange(
+            value,
+            obs: controller.step,
+          ),
+        ),
+        Container(
+          margin: EdgeInsets.symmetric(vertical: 15),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

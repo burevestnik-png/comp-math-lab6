@@ -10,6 +10,6 @@ class GlobalBindings extends Bindings {
     Get.put<LogController>(LogController());
     Get.put<DrawingController>(DrawingController());
     Get.put<ComputationController>(ComputationController());
-    Get.put<FunctionTabController>(FunctionTabController());
+    Get.put<ComputationSettingsController>(ComputationSettingsController());
   }
 }

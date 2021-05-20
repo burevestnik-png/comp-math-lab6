@@ -1,54 +1,44 @@
+import 'dart:math';
+
 import 'package:comp_math_lab6/domain/controllers/computation_controller.dart';
 import 'package:comp_math_lab6/domain/controllers/drawing_controller.dart';
-import 'package:comp_math_lab6/domain/models/dot.dart';
 import 'package:comp_math_lab6/domain/models/equation.dart';
-import 'package:comp_math_lab6/domain/models/tokens/const_token.dart';
-import 'package:comp_math_lab6/domain/models/tokens/polynomial_token.dart';
-import 'package:comp_math_lab6/domain/models/tokens/trigonometric_token.dart';
-import 'package:comp_math_lab6/domain/utils/equation_parser.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class FunctionTabController extends GetxController {
+class ComputationSettingsController extends GetxController {
   final _drawingController = Get.find<DrawingController>();
   final _computationController = Get.find<ComputationController>();
-  final _equationParser = EquationParser();
 
   var _lineId = 0;
 
-  final equations = <Equation>[
-    Equation([TrigonometricToken.sin(1, 1)]),
-    Equation([
-      PolynomialToken(3, 2),
-      PolynomialToken(-1, 1),
-      ConstToken(5),
-    ]),
+  var equations = [
+    Equation("y' = y + (x + 1) * y^2", (x, y) => y + (x + 1) * pow(y, 2)),
+    Equation("y' = e^(2x) + y", (x, y) => pow(e, 2 * x) + y),
   ];
 
-  var equation = "".obs;
-  var a = (-10.0).obs;
-  var b = 10.0.obs;
-  var n = 10.obs;
+  late Rx<Equation> currentEquation;
+  var x0 = 1.0.obs;
+  var y0 = (-1.0).obs;
+  var rangeEnd = 1.5.obs;
+  var accuracy = 0.01.obs;
+  var step = 0.1.obs;
 
-  final equationController = TextEditingController();
-  final aController = TextEditingController();
-  final bController = TextEditingController();
-  final nController = TextEditingController();
+  final x0Controller = TextEditingController();
+  final y0Controller = TextEditingController();
+  final rangeEndController = TextEditingController();
+  final accuracyController = TextEditingController();
+  final stepController = TextEditingController();
 
   @override
   void onInit() {
     super.onInit();
+    currentEquation = equations[0].obs;
     _restoreFieldControllers();
   }
 
-  void onPresetedEquationChange(Equation equation) {
-    equationController.text = equation.toString();
-    onStringFieldChange(equation.toString(), obs: this.equation);
-  }
-
-  void onStringFieldChange(String value, {required RxString obs}) {
-    obs.value = value;
-  }
+  void onCurrentEquationChange(Equation equation) =>
+      currentEquation.value = equation;
 
   void onDoubleFieldChange(
     String value, {
@@ -58,64 +48,41 @@ class FunctionTabController extends GetxController {
     if (parsedValue == null) return;
 
     obs.value = parsedValue;
-    // if (isBordersCorrect()) _redraw();
   }
 
-  void onIntFieldChange(
-    String value, {
-    required RxInt obs,
-  }) {
-    var parsedValue = int.tryParse(value);
-    if (parsedValue == null) return;
+  bool isBordersCorrect() => x0.value < rangeEnd.value;
 
-    obs.value = parsedValue;
-    // if (isNCorrect()) _redraw();
-  }
+  bool isStepCorrect() =>
+      step.value > 0 && step.value <= (rangeEnd.value - x0.value);
 
-  bool isBordersCorrect() => a.value < b.value;
-
-  bool isNCorrect() => n.value >= 1 && n.value <= 30;
+  bool isAccuracyCorrect() => accuracy.value > 0;
 
   void onComputeAction() {
-    if (isBordersCorrect() && isNCorrect() && equation.value.isNotEmpty) {
+    if (isBordersCorrect() && isStepCorrect() && isAccuracyCorrect()) {
+      print(
+          '${currentEquation.value} ${x0.value} ${y0.value} ${rangeEnd.value} ${accuracy.value} ${step.value}');
       _redraw();
     }
   }
 
   void reset() {
-    equation.value = "";
-    a.value = -10.0;
-    b.value = 10.0;
-    n.value = 10;
+    currentEquation.value = equations.first;
+    x0.value = 1.0;
+    y0.value = -1.0;
+    rangeEnd.value = 1.5;
+    accuracy.value = 0.01;
+    step.value = 0.1;
 
     _restoreFieldControllers();
   }
 
   void _restoreFieldControllers() {
-    equationController.text = equation.value;
-    aController.text = a.value.toStringAsFixed(0);
-    bController.text = b.value.toStringAsFixed(0);
-    nController.text = n.value.toString();
+    x0Controller.text = x0.value.toStringAsFixed(1);
+    y0Controller.text = y0.value.toStringAsFixed(1);
+    rangeEndController.text = rangeEnd.value.toStringAsFixed(1);
+    accuracyController.text = accuracy.value.toStringAsFixed(2);
+    stepController.text = step.value.toStringAsFixed(1);
   }
 
-  List<Dot> _formDots() {
-    var dots = <Dot>[];
-    var currentEquation =
-        _equationParser.createEquationFomString(equation.value);
-
-    for (var i = a.value; i < b.value; i += (b.value - a.value) / n.value) {
-      dots.add(Dot(i, currentEquation.compute(i)));
-    }
-
-    return dots;
-  }
-
-  void _redraw() {
-    _lineId = _drawingController.drawLineByDots(
-      _formDots(),
-      id: _lineId,
-      shouldForceRedraw: true,
-      barWidth: 0,
-    );
-  }
+  void _redraw() {}
 }
