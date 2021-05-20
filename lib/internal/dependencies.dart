@@ -1,6 +1,6 @@
 import 'package:comp_math_lab6/domain/controllers/computation_controller.dart';
+import 'package:comp_math_lab6/domain/controllers/computation_settings_controller.dart';
 import 'package:comp_math_lab6/domain/controllers/drawing_controller.dart';
-import 'package:comp_math_lab6/domain/controllers/function_tab_controller.dart';
 import 'package:comp_math_lab6/domain/controllers/log_controller.dart';
 import 'package:get/get.dart';
 

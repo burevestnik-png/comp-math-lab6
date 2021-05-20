@@ -1,4 +1,4 @@
-import 'package:comp_math_lab6/domain/controllers/function_tab_controller.dart';
+import 'package:comp_math_lab6/domain/controllers/computation_settings_controller.dart';
 import 'package:comp_math_lab6/presentation/widgets/option_dropdown_widget.dart';
 import 'package:comp_math_lab6/presentation/widgets/option_text_field_widget.dart';
 import 'package:flutter/material.dart';
