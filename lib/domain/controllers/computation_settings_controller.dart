@@ -1,16 +1,12 @@
 import 'dart:math';
 
 import 'package:comp_math_lab6/domain/controllers/computation_controller.dart';
-import 'package:comp_math_lab6/domain/controllers/drawing_controller.dart';
 import 'package:comp_math_lab6/domain/models/equation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ComputationSettingsController extends GetxController {
-  final _drawingController = Get.find<DrawingController>();
   final _computationController = Get.find<ComputationController>();
-
-  var _lineId = 0;
 
   var equations = [
     Equation("y' = y + (x + 1) * y^2", (x, y) => y + (x + 1) * pow(y, 2)),
@@ -61,7 +57,6 @@ class ComputationSettingsController extends GetxController {
     if (isBordersCorrect() && isStepCorrect() && isAccuracyCorrect()) {
       print(
           '${currentEquation.value} ${x0.value} ${y0.value} ${rangeEnd.value} ${accuracy.value} ${step.value}');
-      _redraw();
     }
   }
 
@@ -83,6 +78,4 @@ class ComputationSettingsController extends GetxController {
     accuracyController.text = accuracy.value.toStringAsFixed(2);
     stepController.text = step.value.toStringAsFixed(1);
   }
-
-  void _redraw() {}
 }
