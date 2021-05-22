@@ -3,6 +3,8 @@ import 'package:comp_math_lab6/domain/models/dot.dart';
 import 'package:comp_math_lab6/domain/models/equation.dart';
 
 class RungeKuttaMethod extends DifferentialMethod {
+  static const int ACCURACY_ORDER = 4;
+
   @override
   List<Dot> process(
     Equation equation, {

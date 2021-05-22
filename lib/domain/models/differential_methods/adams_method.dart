@@ -1,9 +1,13 @@
+import 'dart:math';
+
 import 'package:comp_math_lab6/domain/models/differential_methods/differential_method.dart';
 import 'package:comp_math_lab6/domain/models/differential_methods/runge_kutta_method.dart';
 import 'package:comp_math_lab6/domain/models/dot.dart';
 import 'package:comp_math_lab6/domain/models/equation.dart';
 
 class AdamsMethod extends DifferentialMethod {
+  static const int ACCURACY_ORDER = 4;
+
   @override
   List<Dot> process(
     Equation equation, {
@@ -27,15 +31,18 @@ class AdamsMethod extends DifferentialMethod {
       var fi2 = equation.calc(solutions[i - 2].x, solutions[i - 2].y);
       var fi3 = equation.calc(solutions[i - 3].x, solutions[i - 3].y);
 
+      var dfi = fi0 - fi1;
+      var d2fi = fi0 - 2 * fi1 + fi2;
+      var d3fi = fi0 - 3 * fi1 + 3 * fi2 - fi3;
+
       var yi = solutions[i].y;
-      var yPredictor =
-          yi + (step / 24) * (55 * fi0 - 59 * fi1 + 37 * fi2 - 9 * fi3);
+      var yNext = yi +
+          step * fi0 +
+          pow(step, 2) * dfi / 2.0 +
+          5 * pow(step, 3) * d2fi / 12.0 +
+          3 * pow(step, 4) * d3fi / 8.0;
 
-      var fiNext = equation.calc(solutions[i].x + step, yPredictor);
-      var yCorrector =
-          yi + (step / 24) * (9 * fiNext + 19 * fi0 - 5 * fi1 + fi2);
-
-      solutions.add(Dot(solutions[i].x + step, yCorrector));
+      solutions.add(Dot(solutions[i].x + step, yNext));
     }
 
     return solutions;
