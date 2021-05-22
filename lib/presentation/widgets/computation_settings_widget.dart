@@ -4,6 +4,9 @@ import 'package:comp_math_lab6/presentation/widgets/option_text_field_widget.dar
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../domain/models/differential_methods/differential_method.dart';
+import 'option_dropdown_widget.dart';
+
 class ComputationSettings extends GetView<ComputationSettingsController> {
   space([double height = 10.0]) => SizedBox(height: height);
 
@@ -62,6 +65,12 @@ class ComputationSettings extends GetView<ComputationSettingsController> {
             value,
             obs: controller.step,
           ),
+        ),
+        OptionDropdown(
+          text: "Choose type:",
+          items: MethodType.values,
+          obs: controller.currentMethod,
+          onChange: controller.onCurrentMethodTypeChange,
         ),
         Container(
           margin: EdgeInsets.symmetric(vertical: 15),

@@ -1,5 +1,5 @@
 import 'package:comp_math_lab6/domain/controllers/drawing_controller.dart';
-import 'package:comp_math_lab6/domain/controllers/log_controller.dart';
+import 'package:comp_math_lab6/domain/controllers/table_results_controller.dart';
 import 'package:comp_math_lab6/domain/models/differential_methods/adams_method.dart';
 import 'package:comp_math_lab6/domain/models/differential_methods/differential_method.dart';
 import 'package:comp_math_lab6/domain/models/differential_methods/runge_kutta_method.dart';
@@ -8,14 +8,17 @@ import 'package:comp_math_lab6/domain/models/equation.dart';
 import 'package:get/get.dart';
 
 class ComputationController extends GetxController {
-  final _logger = Get.find<LogController>();
   final _drawingController = Get.find<DrawingController>();
+  final _resultsController = Get.find<TableResultsController>();
 
   final _rungeKuttaMethod = RungeKuttaMethod();
   final _adamsMethod = AdamsMethod();
 
+  var _lineId = 0;
+
   void solve(
-    Equation equation, {
+    Equation equation,
+    MethodType type, {
     required double initY,
     required double from,
     required double to,
@@ -25,11 +28,15 @@ class ComputationController extends GetxController {
     List<Dot> processMethod(DifferentialMethod method, double step) =>
         method.process(equation, initY: initY, from: from, to: to, step: step);
 
-    process(processMethod, _rungeKuttaMethod,
-        step: step, equation: equation, accuracy: accuracy);
+    _resultsController.clear();
+    var dots = type == MethodType.RUNGE_KUTTA
+        ? process(processMethod, _rungeKuttaMethod,
+            step: step, equation: equation, accuracy: accuracy)
+        : process(processMethod, _adamsMethod,
+            step: step, equation: equation, accuracy: accuracy);
 
-    process(processMethod, _adamsMethod,
-        step: step, equation: equation, accuracy: accuracy);
+    _lineId =
+        _drawingController.drawLineByDots(dots, id: _lineId, isCurved: false);
   }
 
   List<Dot> process(
@@ -52,10 +59,34 @@ class ComputationController extends GetxController {
 
       iterationResult = method.formAccuracyDifference(
           equation, baseSolutions, moreAccurateSolutions);
+
+      if (isInfinityAnswer(iterationResult)) {
+        print('Unreachable answer!');
+        return [];
+      }
     } while (
         !_isAccuracyReached(iterationResult, accuracy) && iterations <= 1000);
 
+    _resultsController.addResults(iterationResult);
+    _resultsController.currentStep.value = step * 2;
     return dots;
+  }
+
+  bool isInfinityAnswer(List<StepResult> results) {
+    bool answer = false;
+
+    for (var value in results) {
+      if (value.y.isNaN ||
+          value.y.isInfinite ||
+          value.yDerivative.isNaN ||
+          value.yDerivative.isInfinite ||
+          value.r.isNaN ||
+          value.r.isInfinite) {
+        return true;
+      }
+    }
+
+    return answer;
   }
 
   bool _isAccuracyReached(List<StepResult> results, double accuracy) {

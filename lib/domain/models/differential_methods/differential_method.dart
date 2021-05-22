@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:comp_math_lab6/domain/models/dot.dart';
 import 'package:comp_math_lab6/domain/models/equation.dart';
 
+enum MethodType { ADAMS, RUNGE_KUTTA }
+
 class StepResult {
   final int iteration;
   final double x;

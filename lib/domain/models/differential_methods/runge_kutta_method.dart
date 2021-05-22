@@ -19,18 +19,12 @@ class RungeKuttaMethod extends DifferentialMethod {
     var currentX = from;
     var currentY = initY;
     for (int i = 0; i < iterations; ++i) {
-      var k1 = equation.calc(currentX, currentY);
+      var k1 = step * equation.calc(currentX, currentY);
+      var k2 = step * equation.calc(currentX + step / 2, currentY + k1 / 2);
+      var k3 = step * equation.calc(currentX + step / 2, currentY + k2 / 2);
+      var k4 = step * equation.calc(currentX + step, currentY + k3);
 
-      var yp2 = currentY + k1 * (step / 2);
-      var k2 = equation.calc(currentX + step / 2, yp2);
-
-      var yp3 = currentY + k2 * (step / 2);
-      var k3 = equation.calc(currentX + step / 2, yp3);
-
-      var yp4 = currentY + k3 * step;
-      var k4 = equation.calc(currentX + step / 2, yp4);
-
-      currentY = currentY + (step / 6) * (k1 + 2 * k2 + 2 * k3 + k4);
+      currentY = currentY + (1 / 6) * (k1 + 2 * k2 + 2 * k3 + k4);
       currentX = currentX + step;
 
       solutions.add(Dot(currentX, currentY));

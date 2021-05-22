@@ -13,7 +13,7 @@ class MainScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Interpolation computation application"),
+        title: Text("Differential computation application"),
       ),
       body: Row(
         children: [

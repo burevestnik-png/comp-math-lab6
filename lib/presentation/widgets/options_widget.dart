@@ -1,5 +1,5 @@
 import 'package:comp_math_lab6/presentation/widgets/computation_settings_widget.dart';
-import 'package:comp_math_lab6/presentation/widgets/option_logger_widget.dart';
+import 'package:comp_math_lab6/presentation/widgets/result_table_widget.dart';
 import 'package:flutter/material.dart';
 
 class Options extends StatelessWidget {
@@ -13,7 +13,7 @@ class Options extends StatelessWidget {
         children: [
           ComputationSettings(),
           Divider(),
-          OptionLogger(),
+          Expanded(child: ResultTable()),
         ],
       ),
     );

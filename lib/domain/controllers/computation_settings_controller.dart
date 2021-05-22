@@ -5,15 +5,19 @@ import 'package:comp_math_lab6/domain/models/equation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../models/differential_methods/differential_method.dart';
+
 class ComputationSettingsController extends GetxController {
   final _computationController = Get.find<ComputationController>();
 
   var equations = [
     Equation("y' = y + (x + 1) * y^2", (x, y) => y + (x + 1) * pow(y, 2)),
     Equation("y' = e^(2x) + y", (x, y) => pow(e, 2 * x) + y),
+    Equation("y' = x^2 - 2 * y", (x, y) => pow(x, 2) - y * 2),
   ];
 
   late Rx<Equation> currentEquation;
+  late Rx<MethodType> currentMethod;
   var x0 = 1.0.obs;
   var y0 = (-1.0).obs;
   var rangeEnd = 1.5.obs;
@@ -30,11 +34,14 @@ class ComputationSettingsController extends GetxController {
   void onInit() {
     super.onInit();
     currentEquation = equations[0].obs;
+    currentMethod = MethodType.RUNGE_KUTTA.obs;
     _restoreFieldControllers();
   }
 
   void onCurrentEquationChange(Equation equation) =>
       currentEquation.value = equation;
+
+  void onCurrentMethodTypeChange(MethodType type) => currentMethod.value = type;
 
   void onDoubleFieldChange(
     String value, {
@@ -55,8 +62,15 @@ class ComputationSettingsController extends GetxController {
 
   void onComputeAction() {
     if (isBordersCorrect() && isStepCorrect() && isAccuracyCorrect()) {
-      print(
-          '${currentEquation.value} ${x0.value} ${y0.value} ${rangeEnd.value} ${accuracy.value} ${step.value}');
+      _computationController.solve(
+        currentEquation.value,
+        currentMethod.value,
+        initY: y0.value,
+        from: x0.value,
+        to: rangeEnd.value,
+        step: step.value,
+        accuracy: accuracy.value,
+      );
     }
   }
 

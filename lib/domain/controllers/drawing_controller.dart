@@ -9,7 +9,7 @@ import 'package:get/get.dart';
 ///   axisY
 /// ]
 class DrawingController extends GetxController {
-  static const _kPaddingValue = 5;
+  static const _kPaddingValue = 1;
   static const _kDefaultMax = 15.0;
   static const _kDefaultMin = -15.0;
 
